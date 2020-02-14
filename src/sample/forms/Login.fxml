@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="229.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="229.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.LoginController">
     <children>
         <TextField fx:id="txtLogin" layoutX="33.0" layoutY="105.0" prefHeight="25.0" prefWidth="144.0" promptText="Логин" text="" />
         <PasswordField fx:id="txtPassword" layoutX="33.0" layoutY="147.0" prefHeight="25.0" prefWidth="144.0" promptText="Пароль" text="" />
@@ -19,6 +19,6 @@
                 <Font name="Georgia" size="18.0" />
             </font>
         </Label>
-      <ComboBox fx:id="chooseBase" layoutX="33.0" layoutY="63.0" prefHeight="25.0" prefWidth="144.0" value="Отчетка" />
+      <ComboBox fx:id="chooseBase" layoutX="33.0" layoutY="63.0" prefHeight="25.0" prefWidth="144.0"/>
     </children>
 </AnchorPane>

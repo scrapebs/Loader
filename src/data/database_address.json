@@ -1,0 +1,17 @@
+{
+  "Databases" :
+  [
+    {
+      "Name" : "Data Base 1",
+      "Url" : "127.0.0.1:1521:xxx"
+    },
+    {
+      "Name" : "Data Base 2",
+      "Url" : "127.0.0.1:1521:yyy"
+    },
+    {
+      "Name" : "Data Base 3",
+      "Url" : "127.0.0.1:1521:zzz"
+    }
+  ]
+}

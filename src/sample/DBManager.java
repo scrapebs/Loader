@@ -1,6 +1,5 @@
 package sample;
 
-
 import java.io.IOException;
 import java.sql.*;
 import java.util.LinkedList;
@@ -21,7 +20,8 @@ public class DBManager {
             }
 
         } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            System.err.format("SQL State: %s\n%s\n", e.getSQLState(), e.getMessage());
+            e.printStackTrace();
             return null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,9 +61,12 @@ public class DBManager {
 
         try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@"+base, login, password)) {
             Statement statement = conn.createStatement();
-            ResultSet rs;
+
             String initializeSQL = "begin ibs.executor.set_system_context; end;";
-            //rs = statement.executeQuery(initializeSQL);
+            CallableStatement callableStatement = conn.prepareCall(initializeSQL);
+            callableStatement.execute();
+
+            ResultSet rs;
             rs = statement.executeQuery(queryText);
             ResultSetMetaData rsmd = rs.getMetaData();
 

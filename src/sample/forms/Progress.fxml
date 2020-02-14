@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="179.0" prefWidth="318.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ProgressController">
+<AnchorPane prefHeight="179.0" prefWidth="318.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.ProgressController">
    <children>
       <Button fx:id="stopLoad" layoutX="102.0" layoutY="129.0" mnemonicParsing="false" onAction="#stopLoad" prefHeight="28.0" prefWidth="114.0" text="Отменить" />
       <Label layoutX="108.0" layoutY="24.0" text="Идет выгрузка">

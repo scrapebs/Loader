@@ -6,7 +6,9 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-class CallableThread implements Callable {
+import sample.model.LoaderModel;
+
+public class CallableThread implements Callable {
     private int curpoint;
     private LocalDateTime LDTDateStart;
     private int stepMinutes;

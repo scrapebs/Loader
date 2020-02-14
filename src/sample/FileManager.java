@@ -1,43 +1,69 @@
 package sample;
 
+import org.json.*;
 import java.io.*;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+
 public class FileManager {
+
+    public static JSONObject getJSONObjectFromFile(String fileName) {
+        String line, content="";
+
+        try {
+            InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream(fileName);
+
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(inputStream, "UTF-8")
+            );
+
+            while ((line = reader.readLine()) != null)
+                content+=line;
+
+            JSONObject obj = new JSONObject(content);
+
+            return obj;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public static String createFolder(String folderName){
         File dir = null;
-        File[] files = File.listRoots();
         String loadedFilePath = "\\";
-        for (File file : files)
-            try {
-                loadedFilePath = file.getPath() + "Users\\" + System.getProperty("user.name") + "\\Documents" + "\\" + "Выгрузки";
-                File corePath = new File(loadedFilePath);
-                if(corePath.exists())
-                    dir = new File(loadedFilePath + "\\" + folderName);
-                else {
-                    dir = new File(loadedFilePath);
-                    dir.mkdir();
-                    dir = new File(loadedFilePath + "\\" + folderName);
-                }
-
-                break;
-            } catch (Exception e) {
-                //txtMessage.setText("Не удалось записать в папку Загрузки");
-                System.exit(1);
-                dir = new File(folderName);
+        try {
+            loadedFilePath = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents" + "\\" + "Выгрузки";
+            File corePath = new File(loadedFilePath);
+            if(corePath.exists())
+                dir = new File(loadedFilePath + "\\" + folderName);
+            else {
+                dir = new File(loadedFilePath);
+                dir.mkdir();
+                dir = new File(loadedFilePath + "\\" + folderName);
             }
+        } catch (Exception e) {
+            System.exit(1);
+        }
+
         dir.mkdir();
         return loadedFilePath;
     }
 
     public static void WriteInFile(List<String> rowsOfQuery, String columnNames, String curFilesPath, String curFileName) {
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(curFilesPath + "\\" + curFileName), "Cp1251"))) {
-            for(String rowOfQuery : rowsOfQuery)
-                out.write(rowOfQuery+"\n");
+            for(String rowOfQuery : rowsOfQuery) {
+                rowOfQuery = rowOfQuery.replaceAll("\n", " ");
+                out.write(rowOfQuery + "\n");
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -51,18 +77,10 @@ public class FileManager {
     public static void JoinFiles(String curFilesPath, String loadedFilePath, String finalFileName, String columnNames, boolean isMakeArchive) {
         File folder = new File(curFilesPath);
 
-
         try {
-            /*String[] fileNames = folder.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File folder, String name) {
-                    return name.endsWith(".csv");
-                }
-            });*/
             String[] fileNames = folder.list();
             if (fileNames.length > 0) {
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(loadedFilePath+"\\"+finalFileName+".csv")), "Cp1251"));
-                //LinkedList<String> lines = new LinkedList<>();
                 writer.write(columnNames+"\n");
 
                 int linesCounter = 0;
@@ -72,7 +90,7 @@ public class FileManager {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(curFilesPath + "\\" + fileName), "Cp1251"));
                     String line = bufferedReader.readLine();
                     while(line != null){
-                        if(linesCounter > 999_999){ //999_999
+                        if(linesCounter > 999_999){
                             linesCounter = 0;
                             writer.flush();
                             writer.close();
@@ -85,8 +103,6 @@ public class FileManager {
                         linesCounter++;
                     }
                     bufferedReader.close();
-
-
                 }
                 writer.close();
 
@@ -120,7 +136,6 @@ public class FileManager {
         } catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
     public static void deleteDirecory(String folderPath) {
