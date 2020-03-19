@@ -3,7 +3,10 @@
   [
     {
       "Name" : "Отчетка",
-      "Url" : "naroch-rpt.cgs.sbrf.ru:1521:ufo"
+      "Url" : "naroch-rpt.cgs.sbrf.ru:1521:ufo",
+      "StartSleepHour" : "22",
+      "StartSleepMinute" : "30",
+      "SleepDurationInHours" : "4"
     },
     {
       "Name" : "Архивка",

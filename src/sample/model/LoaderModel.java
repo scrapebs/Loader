@@ -6,12 +6,17 @@ import javafx.scene.control.ProgressBar;
 import sample.CallableThread;
 import sample.DBManager;
 import sample.FileManager;
+import sample.ParseJson;
 import sample.controller.ProgressController;
 
 import java.sql.Date;
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -94,12 +99,16 @@ public class LoaderModel {
             String loadedFilePath = FileManager.createFolder(folderName);
             String tempFilePath = loadedFilePath + "\\" + folderName;
 
+            int[] sleepPeriod = checkSleepPeriod(base);
+            boolean hasSleepPeriod = sleepPeriod == null ? false : true;
+
             executor = Executors.newFixedThreadPool(threadNumber);
 
             futures = new LinkedList<>();
 
             for (int curpoint = 0; curpoint < periodInMinutes; curpoint += stepMinutes) {
-                Future<Void> future = executor.submit(new CallableThread(curpoint, LDTDateStart, stepMinutes, queryText, base, login, password, tempFilePath, divisionMark));
+                Future<Void> future = executor.submit(new CallableThread(curpoint, LDTDateStart, stepMinutes, queryText,
+                        base, login, password, tempFilePath, divisionMark, hasSleepPeriod, sleepPeriod));
                 futures.add(future);
             }
             executor.shutdown();
@@ -176,5 +185,19 @@ public class LoaderModel {
                 interrupted = false;
             }
         }
+    }
+
+    public int[] checkSleepPeriod(String baseName) {
+        int startSleepHour, startSleepMinute, sleepDurationInHours;
+        try {
+            startSleepHour = Integer.parseInt(ParseJson.getJsonFieldByBaseNameAndFieldName("Url", baseName, "StartSleepHour"));
+            startSleepMinute = Integer.parseInt(ParseJson.getJsonFieldByBaseNameAndFieldName("Url",baseName, "StartSleepMinute"));
+            sleepDurationInHours = Integer.parseInt(ParseJson.getJsonFieldByBaseNameAndFieldName("Url",baseName, "SleepDurationInHours"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        int[] periodOfSleep = {startSleepHour, startSleepMinute, sleepDurationInHours};
+        return periodOfSleep;
     }
 }

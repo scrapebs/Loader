@@ -1,6 +1,5 @@
 package sample;
 
-import org.json.*;
 import java.io.*;
 import java.util.List;
 import java.util.Properties;
@@ -11,39 +10,13 @@ import java.util.zip.ZipOutputStream;
 
 public class FileManager {
 
-    public static JSONObject getJSONObjectFromFile(String fileName) {
-        String line, content="";
-
-        try {
-            InputStream inputStream = FileManager.class.getClassLoader().getResourceAsStream(fileName);
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(inputStream, "UTF-8")
-            );
-
-            while ((line = reader.readLine()) != null)
-                content+=line;
-
-            JSONObject obj = new JSONObject(content);
-
-            return obj;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static String getPropertyLoadedFolderPath() {
         String loadedFilePath="";
 
         try {
             String propertyFilePath = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().replace("Loader.jar","");
-            propertyFilePath = propertyFilePath.concat("Loader.cfg");
+            propertyFilePath = propertyFilePath.concat("my.properties");   
+            //System.out.println("get "+propertyFilePath);
             File inputFile = new File(propertyFilePath);
 
             if(!inputFile.exists())
@@ -57,7 +30,6 @@ public class FileManager {
             loadedFilePath = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents" + "\\" + "Выгрузки";
         }
 
-
         return loadedFilePath;
     }
 
@@ -67,7 +39,8 @@ public class FileManager {
 
         try {
             String propertyFilePath = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("Loader.jar","");
-            propertyFilePath = propertyFilePath.concat("Loader.cfg");
+            propertyFilePath = propertyFilePath.concat("my.properties");
+            //System.out.println("set "+propertyFilePath);
             File outputFile = new File(propertyFilePath);
 
             OutputStream ist = new FileOutputStream(outputFile);

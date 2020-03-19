@@ -6,25 +6,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.scene.control.ComboBox;
-
-import org.json.*;
-
-import sample.FileManager;
+import sample.ParseJson;
 import sample.model.LoginModel;
 
-import java.io.*;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.net.URL;
 
 public class LoginController implements Initializable {
 
@@ -41,7 +37,7 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL fxmlFieldLocation, ResourceBundle resources){
 
-        List<String> bases = getNamesOfDatabases();
+        List<String> bases = ParseJson.getNamesOfDatabases();
         chooseBase.getItems().setAll(bases);
         chooseBase.setValue(bases.get(0));
     }
@@ -49,7 +45,7 @@ public class LoginController implements Initializable {
     public void Login (ActionEvent event){
 
         //tns-name for base to connect
-        String base = getDBUrlByName(chooseBase.getValue());
+        String base = ParseJson.getJsonFieldByBaseNameAndFieldName("Name",chooseBase.getValue(), "Url");
 
         try {
             if (LoginModel.isLogin(base, txtLogin.getText(), txtPassword.getText())) {
@@ -75,48 +71,5 @@ public class LoginController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String getDBUrlByName(String baseName) {
-        String base="";
-
-        JSONObject jsonObject = FileManager.getJSONObjectFromFile("data/database_address.json");
-
-        JSONArray dbArray = null;
-        try {
-            dbArray = jsonObject.getJSONArray("Databases");
-
-            for(int i = 0; i < dbArray.length(); i++) {
-                JSONObject dbInfo = dbArray.getJSONObject(i);
-                if(dbInfo.get("Name").toString().equals(baseName)) {
-                    base = dbInfo.get("Url").toString();
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return  base;
-    }
-
-    public List<String> getNamesOfDatabases() {
-        List<String> dbNames = new ArrayList<>();
-
-        JSONObject jsonObject = FileManager.getJSONObjectFromFile("data/database_address.json");
-
-        JSONArray dbArray = null;
-        try {
-            dbArray = jsonObject.getJSONArray("Databases");
-            for(int i = 0; i < dbArray.length(); i++) {
-                JSONObject dbInfo = dbArray.getJSONObject(i);
-                dbNames.add(dbInfo.get("Name").toString());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return dbNames;
     }
 }
