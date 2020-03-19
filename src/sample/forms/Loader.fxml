@@ -11,37 +11,42 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="506.0" prefWidth="770.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.LoaderController">
+<AnchorPane prefHeight="594.0" prefWidth="882.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.LoaderController">
     <children>
-        <Button fx:id="makeLoad" layoutX="334.0" layoutY="169.0" mnemonicParsing="false" onAction="#calculatePeriod" prefHeight="25.0" prefWidth="108.0" text="Выгрузить" />
-        <Label fx:id="txtMessage" layoutX="337.0" layoutY="201.0" prefHeight="18.0" prefWidth="309.0" />
-        <DatePicker fx:id="dpEnd" layoutX="33.0" layoutY="169.0" prefHeight="25.0" prefWidth="158.0" />
-        <DatePicker fx:id="dpStart" layoutX="33.0" layoutY="95.0" prefHeight="25.0" prefWidth="158.0" />
-        <TextField fx:id="dpStartHours" layoutX="202.0" layoutY="95.0" onKeyReleased="#dpStartHoursCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
-        <TextField fx:id="dpStartMinutes" layoutX="240.0" layoutY="95.0" onKeyReleased="#dpStartMinutesCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
-        <Label layoutX="234.0" layoutY="99.0" prefHeight="17.0" prefWidth="12.0" text=":" />
-        <TextField fx:id="dpEndHours" layoutX="202.0" layoutY="169.0" onKeyReleased="#dpEndHoursCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
-        <TextField fx:id="dpEndMinutes" layoutX="240.0" layoutY="169.0" onKeyReleased="#dpEndMinutesCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
-        <Label layoutX="234.0" layoutY="173.0" prefHeight="17.0" prefWidth="12.0" text=":" />
-        <Label layoutX="339.0" layoutY="14.0" text="Выгрузчик">
+        <Button fx:id="makeLoad" defaultButton="true" layoutX="355.0" layoutY="156.0" mnemonicParsing="false" onAction="#calculatePeriod" prefHeight="33.0" prefWidth="158.0" text="Выгрузить" />
+        <Label fx:id="txtMessage" layoutX="52.0" layoutY="241.0" prefHeight="18.0" prefWidth="236.0" />
+        <DatePicker fx:id="dpEnd" layoutX="33.0" layoutY="165.0" prefHeight="25.0" prefWidth="173.0" />
+        <DatePicker fx:id="dpStart" layoutX="33.0" layoutY="95.0" prefHeight="25.0" prefWidth="173.0" />
+        <TextField fx:id="dpStartHours" layoutX="231.0" layoutY="95.0" onKeyReleased="#dpStartHoursCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
+        <TextField fx:id="dpStartMinutes" layoutX="269.0" layoutY="95.0" onKeyReleased="#dpStartMinutesCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
+        <Label layoutX="263.0" layoutY="99.0" prefHeight="17.0" prefWidth="12.0" text=":" />
+        <TextField fx:id="dpEndHours" layoutX="231.0" layoutY="165.0" onKeyReleased="#dpEndHoursCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
+        <TextField fx:id="dpEndMinutes" layoutX="269.0" layoutY="165.0" onKeyReleased="#dpEndMinutesCheck" prefHeight="25.0" prefWidth="28.0" promptText="00" text="" />
+        <Label layoutX="263.0" layoutY="173.0" prefHeight="17.0" prefWidth="12.0" text=":" />
+        <Label layoutX="388.0" layoutY="14.0" text="Выгрузчик">
             <font>
                 <Font name="Georgia" size="18.0" />
             </font>
         </Label>
         <Label layoutX="33.0" layoutY="67.0" text="Дата  время начала" />
-        <Label layoutX="33.0" layoutY="143.0" text="Дата  время окончания" />
-        <TextArea fx:id="txtQuery" layoutX="33.0" layoutY="227.0" prefHeight="255.0" prefWidth="704.0" promptText="SELECT * FROM IBS.z#sluise_mssql_CP&#13;&#10;    WHERE &#13;&#10;       UPPER(c_kod_oper) LIKE '%BEE%' &#13;&#10;       AND c_req_date &gt;= @DATE1&#13;&#10;       AND c_req_date &lt; @DATE2&#13;&#10;       AND c_err_mess IS NOT NULL " scaleShape="false" text="">
+        <Label layoutX="33.0" layoutY="139.0" text="Дата  время окончания" />
+        <TextArea fx:id="txtQuery" layoutX="33.0" layoutY="279.0" pickOnBounds="false" prefHeight="288.0" prefWidth="812.0" promptText="SELECT * FROM IBS.z#sluise_mssql_CP&#13;&#10;    WHERE &#13;&#10;       UPPER(c_kod_oper) LIKE '%BEE%' &#13;&#10;       AND c_req_date &gt;= @DATE1&#13;&#10;       AND c_req_date &lt; @DATE2&#13;&#10;       AND c_err_mess IS NOT NULL " scaleShape="false" text="">
         </TextArea>
-        <Label layoutX="310.0" layoutY="67.0" text="Разбиение при выгрузке (мин)" />
+        <Label fx:id="txtPeriodLabel" layoutX="546.0" layoutY="140.0" text="Разбиение(мин)" />
         <RadioButton fx:id="isPeriodDivision" layoutX="328.0" layoutY="99.0" mnemonicParsing="false" onAction="#isPeriodDivision" opacity="0.8" selected="true" visible="false" />
-        <TextField fx:id="txtPeriod" layoutX="335.0" layoutY="95.0" onKeyReleased="#txtPeriodCheck" prefHeight="25.0" prefWidth="108.0" text="10" />
-      <TextField fx:id="txtThreadNumber" layoutX="550.0" layoutY="95.0" onKeyReleased="#txtThreadNumberCheck" prefHeight="25.0" prefWidth="49.0" text="24" />
-      <Label layoutX="549.0" layoutY="67.0" text="Потоки" />
-      <TextField fx:id="txtFinalFileName" layoutX="550.0" layoutY="169.0" prefHeight="25.0" prefWidth="188.0" text="UIDB_" />
-      <Label layoutX="550.0" layoutY="143.0" prefHeight="17.0" prefWidth="93.0" text="Название файла" />
-      <ComboBox fx:id="txtDivisionMark" layoutX="629.0" layoutY="95.0" prefHeight="25.0" prefWidth="55.0" value=";" />
-      <Label layoutX="627.0" layoutY="67.0" prefHeight="17.0" prefWidth="82.0" text="Разделитель" />
-      <CheckBox fx:id="ckeckBoxMakeArchive" layoutX="720.0" layoutY="99.0" mnemonicParsing="false" />
-      <Label layoutX="712.0" layoutY="67.0" text="Архив" />
+        <TextField fx:id="txtPeriod" layoutX="567.0" layoutY="165.0" onKeyReleased="#txtPeriodCheck" prefHeight="25.0" prefWidth="50.0" text="10" />
+        <TextField fx:id="txtThreadNumber" layoutX="567.0" layoutY="229.0" onKeyReleased="#txtThreadNumberCheck" prefHeight="25.0" prefWidth="50.0" text="24" />
+        <Label fx:id="txtThreadNumberLabel" layoutX="570.0" layoutY="207.0" text="Потоки" />
+        <TextField fx:id="txtFinalFileName" layoutX="353.0" layoutY="95.0" prefHeight="25.0" prefWidth="158.0" text="UIDB_" />
+        <Label layoutX="388.0" layoutY="67.0" prefHeight="17.0" prefWidth="93.0" text="Название файла" />
+        <ComboBox fx:id="txtDivisionMark" editable="true" layoutX="565.0" layoutY="95.0" prefHeight="25.0" prefWidth="41.0" value=";" />
+        <Label layoutX="556.0" layoutY="67.0" prefHeight="17.0" prefWidth="82.0" text="Разделитель" />
+        <CheckBox fx:id="ckeckBoxMakeArchive" layoutX="669.0" layoutY="97.0" mnemonicParsing="false" text="Упаковывать в архив" />
+        <CheckBox fx:id="ckeckBoxSaveTempFiles" layoutX="669.0" layoutY="198.0" mnemonicParsing="false" text="Сохранять временные файлы" />
+        <TextField fx:id="txtFinalFileAddress" layoutX="33.0" layoutY="234.0" prefHeight="25.0" prefWidth="267.0" />
+        <Label layoutX="35.0" layoutY="211.0" text="Путь к файлу выгрузки" />
+        <CheckBox fx:id="ckeckBoxPeriodDay" layoutX="669.0" layoutY="173.0" mnemonicParsing="false" onAction="#isPeriodDay" text="Период разбиения - день" />
+        <CheckBox fx:id="ckeckBoxSaveSqlQuery" layoutX="669.0" layoutY="123.0" mnemonicParsing="false" text="Сохранять sql запрос" />
+      <CheckBox fx:id="ckeckBoxSettings" layoutX="669.0" layoutY="148.0" mnemonicParsing="false" onAction="#isAdditionalSettigsShow" text="Расширенны настройки" />
     </children>
 </AnchorPane>

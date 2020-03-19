@@ -11,8 +11,7 @@ import sample.controller.ProgressController;
 import java.sql.Date;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -26,6 +25,8 @@ public class LoaderModel {
     public static DateTimeFormatter formatterFull = DateTimeFormatter.ofPattern("dd.MM.yyyy HH_mm_ss");
 
     public static boolean isMakeArchive;
+    public static boolean isSaveTempFiles;
+    public static boolean isSaveSqlQuery;
 
     public static volatile ExecutorService executor;
     public static volatile boolean interrupted = false;
@@ -62,8 +63,10 @@ public class LoaderModel {
             return "Запрещенная операция";
         }
 
-        if (! DBManager.isQueryCorrect( queryText, base, login, password)) {
-            return "Не удалось выполнить запрос";
+        String errorText = DBManager.isQueryCorrect( queryText, base, login, password).get(false);
+        if (DBManager.isQueryCorrect( queryText, base, login, password).get(false)!=null) {
+            return errorText;
+            //return "Не удалось выполнить запрос";
         }
 
         return "";
@@ -84,6 +87,7 @@ public class LoaderModel {
             long periodOfDateInMilliseconds = Date.valueOf(LDdateEnd).getTime() - Date.valueOf(LDdateStart).getTime();
             int periodOfTime = endHours*60 + endMinutes - startHours*60 - startMinutes;
             int periodInMinutes = (int) (periodOfDateInMilliseconds / (60 * 1000) + periodOfTime);
+
 
             // Создаем временную папку
             String folderName = "temp_" + finalFileName;
@@ -107,7 +111,6 @@ public class LoaderModel {
                     Thread.sleep(1000);
 
                     double curProgress = countProgress/progressMaxValue*0.9;
-                    //System.out.println(curProgress);
                     progressBar.setProgress(curProgress);
                     Duration duration = Duration.between(start, Instant.now().plusSeconds(2));
                     long durationSec = duration.getSeconds();
@@ -115,6 +118,8 @@ public class LoaderModel {
                         @Override
                         public void run() {
                             statusLabel.setText(String.format("%.0f", curProgress*100)+" %");
+                            if(statusLabel.getText().contains("NaN"))
+                                statusLabel.setText("0 %");
 
                             curTime.setText(String.format("%d:%02d:%02d", durationSec / 3600,
                                     (durationSec % 3600) / 60, durationSec % 60));
@@ -130,12 +135,20 @@ public class LoaderModel {
 
             // Объединяем временные файлы в один финальный;
             if(! interrupted) {
-                System.out.println(interrupted);
                 String columnNames = DBManager.getColumnNames(queryText, base, login, password, divisionMark);
-                FileManager.JoinFiles(tempFilePath, loadedFilePath, finalFileName, columnNames, isMakeArchive);
+                FileManager.joinFiles(tempFilePath, loadedFilePath, finalFileName, columnNames, isMakeArchive);
 
-                // Удаляем папку с временными файлами
-                FileManager.deleteDirecory(tempFilePath);
+                // Удаляем папку с временными файлами если не установлен флаг на сохранение врем файлов
+                if (!isSaveTempFiles)
+                    FileManager.deleteDirecory(tempFilePath);
+
+                if (isSaveSqlQuery) {
+                    FileManager.writeSqlQueryInFile(
+                            queryText,
+                            loadedFilePath+"\\"+"Шаблоны выгрузок",
+                            "SQL запрос " + finalFileName + " "+ LDdateStart+" - " + LDdateEnd + ".txt"
+                    );
+                }
 
                 // Время выполнения
                 long timeEnd, timeProcess;
@@ -154,7 +167,6 @@ public class LoaderModel {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("later");
                         ProgressController.showEndMessage(resultText);
                     }
                 });

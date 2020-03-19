@@ -2,45 +2,53 @@ package sample;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBManager {
-    public static Connection Connector(String base, String login, String password) throws SQLException {
-
-        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@"+base, login, password)) {   //jdbc:oracle:thin:@10.67.30.59:1521:ufo
+    public static Map<Connection, String>  Connector(String base, String login, String password) throws SQLException {
+        Map<Connection, String> result = new HashMap();
+        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@"+base, login, password)) {
             if (conn != null) {
                 System.out.println("Connected to the database!");
-                return conn;
+                result.put(conn,"");
+                return result;
             } else {
                 System.out.println("Failed to make connection!");
-                return null;
+                result.put(null,"Failed to make connection!");
+                return result;
             }
 
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s\n", e.getSQLState(), e.getMessage());
             e.printStackTrace();
-            return null;
+            result.put(null,e.getMessage());
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            result.put(null,e.getMessage());
+            return result;
         }
     }
 
-    public static boolean isQueryCorrect(String queryText, String base, String login, String password) {
+    public static Map<Boolean, String> isQueryCorrect(String queryText, String base, String login, String password) {
+        Map<Boolean, String> result = new HashMap();
         try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + base, login, password)) {
             Statement statement = conn.createStatement();
             queryText = queryText.replaceAll("@DATE1", "sysdate" );
             queryText = queryText.replaceAll("@DATE2", "sysdate" );
-            System.out.println(queryText);
             ResultSet rs = statement.executeQuery(queryText);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            result.put(false,e.getMessage());
+            return result;
         }
-        return true;
+        result.put(true,"");
+        return result;
     }
 
     public static boolean checkDBState(String base, String login, String password) {
@@ -71,7 +79,6 @@ public class DBManager {
             ResultSetMetaData rsmd = rs.getMetaData();
 
             int numberOfColumns = rsmd.getColumnCount();
-            String columnNames ="";
             List<String> rowsOfQuery = new LinkedList<>();
 
             while (rs.next()) {
@@ -87,7 +94,7 @@ public class DBManager {
 
             //Создать временный Файл с данным периодом выгрузки
             if (rowsOfQuery.size() !=0) {
-                FileManager.WriteInFile(rowsOfQuery, columnNames, curFilesPath, curFileName);
+                FileManager.writeInFile(rowsOfQuery,  curFilesPath, curFileName);
             }
 
             rs.close();

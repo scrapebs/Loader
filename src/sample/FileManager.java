@@ -3,9 +3,11 @@ package sample;
 import org.json.*;
 import java.io.*;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 
 public class FileManager {
 
@@ -33,15 +35,53 @@ public class FileManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return null;
+    }
+
+    public static String getPropertyLoadedFolderPath() {
+        String loadedFilePath="";
+
+        try {
+            String propertyFilePath = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().replace("Loader.jar","");
+            propertyFilePath = propertyFilePath.concat("Loader.cfg");
+            File inputFile = new File(propertyFilePath);
+
+            if(!inputFile.exists())
+                inputFile.createNewFile();
+            InputStream ist = new FileInputStream(inputFile);
+            Properties p = new Properties();
+            p.load(ist);
+
+            loadedFilePath = p.get("loadedFilePath").toString();
+        } catch (Exception e) {
+            loadedFilePath = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents" + "\\" + "Выгрузки";
+        }
+
+
+        return loadedFilePath;
+    }
+
+    public static void updatePropertyLoadedFolderPath(String loadedFilePath) {
+        Properties p = new Properties();
+        p.put("loadedFilePath", loadedFilePath);
+
+        try {
+            String propertyFilePath = FileManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("Loader.jar","");
+            propertyFilePath = propertyFilePath.concat("Loader.cfg");
+            File outputFile = new File(propertyFilePath);
+
+            OutputStream ist = new FileOutputStream(outputFile);
+
+            p.store(ist, null);
+        }  catch (Exception e) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     public static String createFolder(String folderName){
         File dir = null;
-        String loadedFilePath = "\\";
+        String loadedFilePath = getPropertyLoadedFolderPath();
         try {
-            loadedFilePath = "C:\\Users\\" + System.getProperty("user.name") + "\\Documents" + "\\" + "Выгрузки";
             File corePath = new File(loadedFilePath);
             if(corePath.exists())
                 dir = new File(loadedFilePath + "\\" + folderName);
@@ -58,7 +98,7 @@ public class FileManager {
         return loadedFilePath;
     }
 
-    public static void WriteInFile(List<String> rowsOfQuery, String columnNames, String curFilesPath, String curFileName) {
+    public static void writeInFile(List<String> rowsOfQuery, String curFilesPath, String curFileName) {
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(curFilesPath + "\\" + curFileName), "Cp1251"))) {
             for(String rowOfQuery : rowsOfQuery) {
                 rowOfQuery = rowOfQuery.replaceAll("\n", " ");
@@ -73,8 +113,22 @@ public class FileManager {
         }
     }
 
+    public static void writeSqlQueryInFile(String text, String filePath, String fileName) {
+        File folder = new File(filePath);
+        if (!folder.exists())
+            createFolder("Шаблоны выгрузок");
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath + "\\" + fileName), "Cp1251"))) {
+            out.write(text);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public static void JoinFiles(String curFilesPath, String loadedFilePath, String finalFileName, String columnNames, boolean isMakeArchive) {
+    public static void joinFiles(String curFilesPath, String loadedFilePath, String finalFileName, String columnNames, boolean isMakeArchive) {
         File folder = new File(curFilesPath);
 
         try {
@@ -148,5 +202,14 @@ public class FileManager {
             }
             dir.delete();
         } else dir.delete();
+    }
+
+    public static boolean checkFolder(String txtFinalFileAddress) {
+        File folder = new File(txtFinalFileAddress);
+        if(!folder.exists())
+            folder.mkdir();
+            if(!folder.isDirectory())
+                return false;
+        return true;
     }
 }

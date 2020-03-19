@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import sample.FileManager;
 import sample.LoadingParams;
 import sample.model.LoaderModel;
 
@@ -30,11 +31,18 @@ public class LoaderController implements Initializable {
     @FXML private TextArea txtQuery;
     @FXML private Button makeLoad;
     @FXML private TextField txtPeriod;
+    @FXML private Label txtPeriodLabel;
     @FXML private RadioButton isPeriodDivision;
     @FXML private TextField txtThreadNumber;
+    @FXML private Label txtThreadNumberLabel;
     @FXML private TextField txtFinalFileName;
+    @FXML private TextField txtFinalFileAddress;
     @FXML private ComboBox<String> txtDivisionMark;
     @FXML private CheckBox ckeckBoxMakeArchive;
+    @FXML private CheckBox ckeckBoxSaveTempFiles;
+    @FXML private CheckBox ckeckBoxSaveSqlQuery;
+    @FXML private CheckBox ckeckBoxPeriodDay;
+    @FXML private CheckBox ckeckBoxSettings;
 
     private static String base;
     private static String login;
@@ -64,7 +72,15 @@ public class LoaderController implements Initializable {
 
     @Override
     public void initialize(URL fxmlFieldLocation, ResourceBundle resources){
-        txtDivisionMark.getItems().setAll(";", ",", "#", "&", "/", "|");
+        txtDivisionMark.getItems().setAll(";", ",", "#", "&", "/", "|", "©");
+        txtFinalFileAddress.setText(FileManager.getPropertyLoadedFolderPath());
+
+        ckeckBoxPeriodDay.setVisible(false);
+        ckeckBoxSaveTempFiles.setVisible(false);
+        txtPeriod.setVisible(false);
+        txtPeriodLabel.setVisible(false);
+        txtThreadNumber.setVisible(false);
+        txtThreadNumberLabel.setVisible(false);
     }
 
     public void calculatePeriod(ActionEvent event) {
@@ -83,6 +99,22 @@ public class LoaderController implements Initializable {
             alert.show();
             return;
         }
+
+        // check folder for loading files
+        boolean correctFolder = FileManager.checkFolder(txtFinalFileAddress.getText().trim());
+        if(correctFolder) {
+            //Актуализируем путь до папки с выгрузками
+            FileManager.updatePropertyLoadedFolderPath(txtFinalFileAddress.getText().trim());
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Некорректный адрес папки");
+            alert.setHeaderText(null);
+            alert.setContentText("Введите корректный адрес папки, куда сохранять выгрузки");
+            alert.show();
+            return;
+        }
+
+
 
         // We divide the entire period of the request into such time segments (number of minutes)
         int stepMinutes = isPeriodDivision.isSelected() ? Integer.parseInt(txtPeriod.getText()) : 1000000000;
@@ -134,6 +166,8 @@ public class LoaderController implements Initializable {
 
         // Check whether we put results into archive
         LoaderModel.isMakeArchive = ckeckBoxMakeArchive.isSelected();
+        LoaderModel.isSaveTempFiles = ckeckBoxSaveTempFiles.isSelected();
+        LoaderModel.isSaveSqlQuery = ckeckBoxSaveSqlQuery.isSelected();
 
         try {
             Stage primaryStage = new Stage();
@@ -149,7 +183,6 @@ public class LoaderController implements Initializable {
             primaryStage.setScene(scene);
             primaryStage.show();
 
-
             // Overriding action of closing window of progress of loading
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
@@ -162,7 +195,7 @@ public class LoaderController implements Initializable {
             ProgressController.setPrimaryStage(primaryStage);
             ProgressController.setPrimaryStageMain(primaryStageMain);
             ProgressController.setMakeLoad(makeLoad);
-            primaryStageMain.opacityProperty().setValue(0.9);
+            primaryStageMain.opacityProperty().setValue(0.95);
             makeLoad.setDisable(true);
 
         } catch (IOException e) {
@@ -200,6 +233,7 @@ public class LoaderController implements Initializable {
     }
 
     // Check value of field that contains number of minutes in each small period
+    // Check value of field that contains number of minutes in each small period
     public void txtPeriodCheck() {
         String numberMatch = "^[1-9]|^[1-9][0-9]|^[1-9]{2}[0-9]";
         if(!txtPeriod.getText().matches(numberMatch)) {
@@ -224,6 +258,41 @@ public class LoaderController implements Initializable {
         String numberMatch = "^[1-9]|^[1-9][0-9]|^[1-6]{2}[0-9]";
         if(!txtThreadNumber.getText().matches(numberMatch)) {
             txtThreadNumber.setText("24");
+        }
+    }
+
+    // Check if period of division is a day
+    public void isPeriodDay() {
+        if (ckeckBoxPeriodDay.isSelected() == true) {
+            txtPeriod.setText("1440");
+            txtPeriod.setEditable(false);
+            txtPeriod.setOpacity(0.5);
+        } else {
+            txtPeriod.setText("10");
+            txtPeriod.setEditable(true);
+            txtPeriod.setOpacity(1);
+        }
+    }
+
+    // Check to show additional settings
+    public void isAdditionalSettigsShow() {
+        if (ckeckBoxSettings.isSelected() == true) {
+            ckeckBoxPeriodDay.setVisible(true);
+            ckeckBoxSaveTempFiles.setVisible(true);
+            txtPeriod.setVisible(true);
+            txtPeriodLabel.setVisible(true);
+            txtThreadNumber.setVisible(true);
+            txtThreadNumberLabel.setVisible(true);
+        } else {
+            ckeckBoxPeriodDay.setVisible(false);
+            ckeckBoxPeriodDay.setSelected(false);
+            isPeriodDay();
+            ckeckBoxSaveTempFiles.setVisible(false);
+            ckeckBoxSaveTempFiles.setSelected(false);
+            txtPeriod.setVisible(false);
+            txtPeriodLabel.setVisible(false);
+            txtThreadNumber.setVisible(false);
+            txtThreadNumberLabel.setVisible(false);
         }
     }
 }

@@ -14,9 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.control.ComboBox;
 
-//import org.json.simple.JSONArray;
-//import org.json.simple.JSONObject;
-
 import org.json.*;
 
 import sample.FileManager;
@@ -24,7 +21,6 @@ import sample.model.LoginModel;
 
 import java.io.*;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;

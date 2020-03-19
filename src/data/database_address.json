@@ -2,16 +2,12 @@
   "Databases" :
   [
     {
-      "Name" : "Data Base 1",
-      "Url" : "127.0.0.1:1521:xxx"
+      "Name" : "Отчетка",
+      "Url" : "naroch-rpt.cgs.sbrf.ru:1521:ufo"
     },
     {
-      "Name" : "Data Base 2",
-      "Url" : "127.0.0.1:1521:yyy"
-    },
-    {
-      "Name" : "Data Base 3",
-      "Url" : "127.0.0.1:1521:zzz"
+      "Name" : "Архивка",
+      "Url" : "mekong-arch.cgs.sbrf.ru:1521:epsarch"
     }
   ]
 }

@@ -18,14 +18,12 @@ import java.util.ResourceBundle;
 
 public class ProgressController implements Initializable {
 
-    @FXML private Button stopLoad;
     @FXML private Label txtMessage;
     @FXML private ProgressBar progressBar;
     @FXML private Label statusLabel;
     @FXML private Label curTime;
 
     private static LoadingParams params;
-
     public static Stage primaryStage;
     public static Stage primaryStageMain;
     public static Button makeLoad;
@@ -90,10 +88,8 @@ public class ProgressController implements Initializable {
 
         LoaderModel.executor.shutdownNow();
         LoaderModel.interrupted = true;
-        System.out.println("in stopload");
         while (!LoaderModel.executor.isTerminated()) {
         }
-        System.out.println("done");
         taskLoading = null;
         primaryStage.hide();
         primaryStageMain.show();
